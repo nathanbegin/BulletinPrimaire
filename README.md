@@ -14,6 +14,7 @@ Carnet de notes et bulletins pour l'enseignement primaire au Québec. Applicatio
 - **Saisie rapide** : un élève à la fois avec pavé numérique géant (ou boutons de cote / Succès-Échec : un seul toucher par élève), passage automatique à l'élève suivant, bouton « note maximale », absent, option « sauter les élèves déjà notés », statistiques en direct. Sur téléphone, toucher une cellule du tableau ouvre aussi le pavé.
 - **Statistiques** par évaluation (histogramme, cote z), par groupe (matières et compétences) et par élève (comparaison à la moyenne du groupe).
 - **Bulletins** par étape, imprimables / PDF, avec moyenne du groupe, résultat final cumulatif et commentaires.
+- **Numérisation par IA** : photographier un relevé papier (ou importer un PDF), Claude lit le tableau, reconnaît les élèves et propose matière, compétence et barème pour chaque colonne. Écran de vérification (cases incertaines en jaune, invalides en rouge) avant l'import ; possibilité d'ajouter les élèves absents de la liste. Nécessite une clé API Anthropic (Réglages → Intelligence artificielle), conservée uniquement sur l'appareil.
 - **Exportation Excel** (.xlsx) par groupe : fiche du groupe, élèves et interventions, résultats par étape et final, notes détaillées par étape, statistiques.
 - **Sauvegarde** : données stockées sur l'appareil ; export/import JSON pour sauvegarder ou changer d'appareil.
 

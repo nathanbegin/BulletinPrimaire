@@ -21,6 +21,9 @@ export default function EvaluationsPage() {
           Évaluations <small>{term.name}</small>
         </h1>
         <div className="actions">
+          <button className="btn" onClick={() => navigate('numeriser')} disabled={!subjects.length}>
+            <Icon name="camera" size={18} /> Numériser un relevé
+          </button>
           <button className="btn btn-primary" onClick={() => setForm({})} disabled={!subjects.length}>
             <Icon name="plus" size={18} /> Nouvelle évaluation
           </button>

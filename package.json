@@ -12,6 +12,7 @@
     "build:pages": "tsc -b && vite build --outDir docs --emptyOutDir && touch docs/.nojekyll"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^1.5.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "xlsx": "^0.18.5",

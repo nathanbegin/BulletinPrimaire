@@ -271,6 +271,9 @@ export default function GridPage() {
               <input type="checkbox" checked={showPct} onChange={(e) => setShowPct(e.target.checked)} /> Afficher en %
             </label>
           )}
+          <button className="btn" onClick={() => navigate('numeriser')} title="Numériser un relevé papier avec l’IA">
+            <Icon name="camera" size={18} /> Numériser
+          </button>
           <button className="btn" onClick={printNow} title="Imprimer ou enregistrer en PDF">
             <Icon name="print" size={18} /> PDF
           </button>

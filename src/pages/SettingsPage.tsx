@@ -1,9 +1,10 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useStore } from '../store';
 import { DEFAULT_LETTER_SCALE, demoData, emptyData, uid } from '../lib/defaults';
 import { sortedScale } from '../lib/grading';
 import { Icon } from '../components/Icon';
 import type { AppData, LetterGrade } from '../types';
+import { AI_MODEL, loadAIConfig, saveAIConfig } from '../lib/aiConfig';
 
 export default function SettingsPage() {
   const data = useStore((s) => s.data);
@@ -210,6 +211,8 @@ export default function SettingsPage() {
         </label>
       </section>
 
+      <AISettings />
+
       <section className="card">
         <h2>Données</h2>
         <p className="muted">
@@ -233,5 +236,63 @@ export default function SettingsPage() {
         </div>
       </section>
     </div>
+  );
+}
+
+function AISettings() {
+  const [cfg, setCfg] = useState(loadAIConfig);
+  const [show, setShow] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const update = (p: Partial<typeof cfg>) => {
+    setCfg({ ...cfg, ...p });
+    setSaved(false);
+  };
+  return (
+    <section className="card form">
+      <h2>Intelligence artificielle (numérisation)</h2>
+      <p className="muted">
+        La fonction « Numériser » lit les photos de relevés papier avec Claude ({AI_MODEL}). Elle nécessite une clé API Anthropic
+        (console.anthropic.com) ; l’utilisation est facturée à ce compte.
+      </p>
+      <label>
+        Clé API
+        <div className="comp-row">
+          <input
+            type={show ? 'text' : 'password'}
+            autoComplete="off"
+            value={cfg.apiKey}
+            placeholder="sk-ant-…"
+            onChange={(e) => update({ apiKey: e.target.value })}
+          />
+          <button type="button" className="btn" onClick={() => setShow(!show)}>
+            {show ? 'Masquer' : 'Afficher'}
+          </button>
+        </div>
+      </label>
+      <label>
+        Serveur relais (facultatif)
+        <input value={cfg.baseURL} placeholder="https://… (laisser vide pour l’API Anthropic)" onChange={(e) => update({ baseURL: e.target.value })} />
+        <small className="hint">Pour un établissement qui fournit son propre relais : la clé reste alors sur le serveur.</small>
+      </label>
+      <div className="actions left">
+        <button
+          className="btn btn-primary"
+          onClick={() => {
+            saveAIConfig({ apiKey: cfg.apiKey.trim(), baseURL: cfg.baseURL.trim() });
+            setSaved(true);
+          }}
+        >
+          Enregistrer
+        </button>
+        <button className="btn btn-danger-ghost" onClick={() => { saveAIConfig({ apiKey: '', baseURL: '' }); setCfg({ apiKey: '', baseURL: '' }); }}>
+          Retirer la clé
+        </button>
+        {saved && <span className="muted">Enregistré ✓</span>}
+      </div>
+      <small className="hint">
+        La clé est conservée seulement dans ce navigateur, n’est jamais incluse dans les sauvegardes exportées et n’est envoyée qu’à
+        Anthropic. Utilisez une clé dédiée avec une limite de dépenses, et retirez-la d’un appareil partagé.
+      </small>
+    </section>
   );
 }

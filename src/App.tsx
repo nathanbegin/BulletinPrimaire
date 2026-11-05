@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { useRoute, navigate } from './router';
 import { useStore, useActiveGroup, useActiveTerm } from './store';
 import { Icon } from './components/Icon';
@@ -10,6 +10,7 @@ import BulletinPage from './pages/BulletinPage';
 import GroupPage from './pages/GroupPage';
 import SettingsPage from './pages/SettingsPage';
 import WelcomePage from './pages/WelcomePage';
+const ScanPage = lazy(() => import('./pages/ScanPage'));
 import { groupLabel, groupsByYear } from './lib/support';
 
 const NAV = [
@@ -44,6 +45,13 @@ export default function App() {
         break;
       case 'evaluations':
         content = <EvaluationsPage />;
+        break;
+      case 'numeriser':
+        content = (
+          <Suspense fallback={<div className="page muted">Chargement…</div>}>
+            <ScanPage />
+          </Suspense>
+        );
         break;
       case 'stats':
         content = <StatsPage tab={route[1]} itemId={route[2]} />;
@@ -99,7 +107,7 @@ export default function App() {
       </header>
       <nav className="sidenav no-print">
         {NAV.map((n) => (
-          <a key={n.path} href={`#/${n.path}`} className={page === n.path || (page === 'saisie' && n.path === 'evaluations') ? 'active' : ''}>
+          <a key={n.path} href={`#/${n.path}`} className={page === n.path || ((page === 'saisie' || page === 'numeriser') && n.path === 'evaluations') ? 'active' : ''}>
             <Icon name={n.icon} />
             <span>{n.label}</span>
           </a>

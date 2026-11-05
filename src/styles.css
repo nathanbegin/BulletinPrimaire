@@ -560,3 +560,41 @@ input[type='checkbox'] { width: 20px; height: 20px; accent-color: var(--primary)
 @page landscape { size: letter landscape; }
 .subject-teacher { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 0.88rem; color: var(--text-2); font-weight: 600; }
 .subject-teacher input { flex: 1; max-width: 360px; font-weight: 400; }
+
+/* ---------- Numérisation IA ---------- */
+.actions.left { margin-left: 0; }
+.btn-lg { min-height: 48px; padding: 10px 20px; font-size: 1.02rem; }
+.alert { border-radius: var(--radius); padding: 10px 14px; margin-bottom: 12px; }
+.alert.error { background: var(--danger-bg); color: var(--danger); font-weight: 600; }
+.alert.info { background: var(--primary-2); color: var(--text); }
+.scan-thumbs { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+.scan-thumb { position: relative; width: 120px; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 0.8rem; color: var(--text-2); }
+.scan-thumb img, .scan-pdf { width: 120px; height: 150px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); background: var(--surface-2); }
+.scan-pdf { display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--danger); }
+.scan-thumb .icon-btn { position: absolute; top: 4px; right: 4px; width: 28px; height: 28px; background: var(--surface); box-shadow: var(--shadow); }
+.scan-summary { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin-bottom: 10px; font-size: 0.9rem; }
+.pill { padding: 3px 10px; border-radius: 99px; font-size: 0.8rem; font-weight: 600; }
+.pill-error { background: var(--danger-bg); color: var(--danger); }
+.pill-warn { background: var(--low-bg); color: var(--warn); }
+.pill-uncertain { background: #fdf3cf; color: #7a5a00; }
+.scan-sheet { max-height: calc(100vh - var(--top-h) - 230px); }
+.scan-col { min-width: 150px; vertical-align: top !important; text-align: left !important; }
+.scan-col > * { display: block; width: 100%; margin-bottom: 4px; font-weight: 400; }
+.scan-col select, .scan-col input { min-height: 32px; padding: 4px 6px; font-size: 0.82rem; }
+.scan-col .input-suffix { display: flex; align-items: center; gap: 4px; font-size: 0.8rem; }
+.scan-col .input-suffix input { width: 70px; }
+.scan-col.excluded { opacity: 0.5; }
+.toggle.small { font-size: 0.78rem; }
+.scan-student { min-width: 190px; padding: 4px 8px !important; }
+.scan-name { font-size: 0.75rem; color: var(--text-2); font-weight: 500; font-style: italic; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.scan-student select { width: 100%; min-height: 32px; padding: 2px 6px; font-size: 0.85rem; }
+.scan-cell { padding: 3px !important; }
+.scan-cell input { width: 100%; min-width: 60px; min-height: 34px; text-align: center; padding: 4px; }
+.scan-cell.uncertain input { background: #fdf3cf; border-color: #e3c25a; }
+.scan-cell.invalid input { background: var(--danger-bg); border-color: var(--danger); color: var(--danger); }
+.scan-cell.skip input { opacity: 0.4; }
+tr.row-ignored td input, tr.row-ignored .scan-name { opacity: 0.45; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .scan-cell.uncertain input, :root:not([data-theme='light']) .pill-uncertain { background: #3d3415; color: #f3d77a; }
+}
+.cell-err { display: block; font-size: 0.68rem; color: var(--danger); text-align: center; }
