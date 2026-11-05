@@ -69,8 +69,13 @@ export function buildGroupWorkbookData(data: AppData, group: Group): { name: str
       ['Étapes', 'Pondération (%)', 'Début', 'Fin'],
       ...data.terms.map((t) => [t.name, t.weight, t.start, t.end]),
       [],
-      ['Matière', 'Mode', 'Compétences'],
-      ...subjects.map((s) => [s.name, MODE_LABELS[s.mode], s.competencies.map((c) => `${c.name} (${c.weight} %)`).join(' · ')]),
+      ['Matière', 'Mode', 'Compétences', 'Enseignant(e)'],
+      ...subjects.map((s) => [
+        s.name,
+        MODE_LABELS[s.mode],
+        s.competencies.map((c) => `${c.name} (${c.weight} %)`).join(' · '),
+        s.teacherName?.trim() || groupTeacher(group, data),
+      ]),
     ],
   });
 

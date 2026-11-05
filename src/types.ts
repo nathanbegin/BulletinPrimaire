@@ -82,6 +82,8 @@ export interface Subject {
   mode: GradingMode;
   competencies: Competency[];
   order: number;
+  /** Enseignant(e) responsable de la matière si différent(e) du titulaire (ex. spécialiste). */
+  teacherName?: string;
 }
 
 export interface Evaluation {

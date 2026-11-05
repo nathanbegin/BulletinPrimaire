@@ -13,6 +13,8 @@ import {
 import { Icon } from '../components/Icon';
 import type { AppData, Group, Student, Term } from '../types';
 import { groupLabel, groupSchool, groupTeacher, groupYear } from '../lib/support';
+import { mean } from '../lib/stats';
+import { PrintFooterLine, printNow } from '../components/Print';
 
 export default function BulletinPage() {
   const data = useStore((s) => s.data);
@@ -37,7 +39,7 @@ export default function BulletinPage() {
               </option>
             ))}
           </select>
-          <button className="btn btn-primary" onClick={() => window.print()}>
+          <button className="btn btn-primary" onClick={printNow}>
             <Icon name="print" size={18} /> Imprimer / PDF
           </button>
         </div>
@@ -60,7 +62,12 @@ function BulletinSheet({ data, group, term, student }: { data: AppData; group: G
   const terms = data.terms;
   const showAvg = settings.showGroupAverage;
   const comment = data.comments[term.id]?.[student.id] ?? '';
-  const avg = studentTermAverage(data, group.id, term.id, student.id);
+  const students = groupStudents(data, group.id);
+  const termTiles = terms.map((t, i) => {
+    if (i > termIdx) return { t, future: true, r: null, g: null };
+    const g = mean(students.map((st) => studentTermAverage(data, group.id, t.id, st.id)).filter((v): v is number => v !== null));
+    return { t, future: false, r: studentTermAverage(data, group.id, t.id, student.id), g };
+  });
 
   const cells = (get: (t: Term) => { r: number | null; g: number | null }, mode: AppData['subjects'][number]['mode']) =>
     terms.map((t, i) => {
@@ -68,8 +75,10 @@ function BulletinSheet({ data, group, term, student }: { data: AppData; group: G
       const { r, g } = future ? { r: null, g: null } : get(t);
       return (
         <Fragment key={t.id}>
-          <td className={`num ${r !== null && r < settings.passThreshold ? 'low-text' : ''}`}>{future ? '' : displayResult(r, mode, settings)}</td>
-          {showAvg && <td className="num muted">{future ? '' : displayResult(g, mode, settings)}</td>}
+          <td className={`num b-res ${future ? 'future' : ''} ${t.id === term.id ? 'current' : ''} ${r !== null && r < settings.passThreshold ? 'low' : ''}`}>
+            {future ? '' : displayResult(r, mode, settings)}
+          </td>
+          {showAvg && <td className={`num b-grp ${future ? 'future' : ''}`}>{future ? '' : displayResult(g, mode, settings)}</td>}
         </Fragment>
       );
     });
@@ -77,10 +86,13 @@ function BulletinSheet({ data, group, term, student }: { data: AppData; group: G
   return (
     <article className="bulletin">
       <header className="b-head">
-        <div>
+        <div className="b-brand">
+          <img src="./icon.svg" alt="" width={40} height={40} />
+          <div>
           <div className="b-school">{groupSchool(group, data) || 'École'}</div>
           <div className="b-title">Bulletin scolaire — {term.name}</div>
           <div className="muted">Année scolaire {groupYear(group, data)}</div>
+          </div>
         </div>
         <div className="b-ident">
           <div>
@@ -111,16 +123,28 @@ function BulletinSheet({ data, group, term, student }: { data: AppData; group: G
         </div>
       </header>
 
+      <div className="b-tiles">
+        {termTiles.map(({ t, future, r, g }) => (
+          <div key={t.id} className={`b-tile ${future ? 'future' : ''} ${t.id === term.id ? 'current' : ''}`}>
+            <div className="b-tile-label">
+              {t.name} <small>({t.weight} %)</small>
+            </div>
+            <div className={`b-tile-value ${r !== null && r < settings.passThreshold ? 'low' : ''}`}>{future ? '—' : displayResult(r, 'percent', settings)}</div>
+            <div className="b-tile-sub">{future ? 'À venir' : showAvg ? `Groupe : ${displayResult(g, 'percent', settings)}` : 'Moyenne générale'}</div>
+          </div>
+        ))}
+      </div>
+
       <table className="b-table">
         <thead>
           <tr>
             <th rowSpan={2} className="b-subj">Matière / compétence</th>
             {terms.map((t) => (
-              <th key={t.id} colSpan={showAvg ? 2 : 1}>
+              <th key={t.id} colSpan={showAvg ? 2 : 1} className={t.id === term.id ? 'current' : ''}>
                 {t.name} <small>({t.weight} %)</small>
               </th>
             ))}
-            <th rowSpan={2}>Résultat final</th>
+            <th rowSpan={2} className="b-final-h">Résultat final</th>
           </tr>
           <tr>
             {terms.map((t) => (
@@ -135,12 +159,17 @@ function BulletinSheet({ data, group, term, student }: { data: AppData; group: G
           {subjects.map((s) => (
             <Fragment key={s.id}>
               <tr className="row-strong">
-                <td>{s.name}</td>
+                <td>
+                  {s.name}
+                  {s.teacherName?.trim() && s.teacherName.trim() !== groupTeacher(group, data) && (
+                    <span className="b-subj-teacher">Enseignant(e) : {s.teacherName}</span>
+                  )}
+                </td>
                 {cells(
                   (t) => ({ r: subjectTermResult(data, s, t.id, student.id), g: subjectTermStats(data, s, t.id).mean }),
                   s.mode,
                 )}
-                <td className="num strong">{displayResult(subjectYearResult(data, s, student.id, undefined, term.id), s.mode, settings)}</td>
+                <td className="num b-final strong">{displayResult(subjectYearResult(data, s, student.id, undefined, term.id), s.mode, settings)}</td>
               </tr>
               {s.competencies.map((c) => (
                 <tr key={c.id} className="row-sub">
@@ -151,19 +180,13 @@ function BulletinSheet({ data, group, term, student }: { data: AppData; group: G
                     (t) => ({ r: competencyResult(data, s, c.id, t.id, student.id), g: subjectTermStats(data, s, t.id, c.id).mean }),
                     s.mode,
                   )}
-                  <td className="num">{displayResult(subjectYearResult(data, s, student.id, c.id, term.id), s.mode, settings)}</td>
+                  <td className="num b-final">{displayResult(subjectYearResult(data, s, student.id, c.id, term.id), s.mode, settings)}</td>
                 </tr>
               ))}
             </Fragment>
           ))}
         </tbody>
       </table>
-      {avg !== null && (
-        <p className="b-avg">
-          Moyenne générale de l’étape : <strong>{displayResult(avg, 'percent', settings)}</strong>
-        </p>
-      )}
-
       {student.support?.modification && (
         <p className="b-note">* Les résultats de cet élève sont établis en fonction d’exigences modifiées (plan d’intervention).</p>
       )}
@@ -183,6 +206,7 @@ function BulletinSheet({ data, group, term, student }: { data: AppData; group: G
         <div>Signature de l’enseignant(e)</div>
         <div>Signature du parent</div>
       </footer>
+      <PrintFooterLine group={group} className="b-footer" />
     </article>
   );
 }

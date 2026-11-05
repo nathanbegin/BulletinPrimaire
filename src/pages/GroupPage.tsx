@@ -182,6 +182,11 @@ function SubjectsTab({ groupId }: { groupId: string }) {
   const subjects = groupSubjects(data, groupId);
   const [adding, setAdding] = useState(false);
   const existing = new Set(subjects.map((s) => s.name));
+  const group = data.groups.find((g) => g.id === groupId)!;
+  const titulaire = groupTeacher(group, data);
+  const knownTeachers = [
+    ...new Set([...data.groups.map((g) => g.teacherName), ...data.subjects.map((x) => x.teacherName), data.settings.teacherName].filter((x): x is string => !!x?.trim())),
+  ].sort((a, b) => a.localeCompare(b, 'fr'));
 
   return (
     <>
@@ -202,8 +207,14 @@ function SubjectsTab({ groupId }: { groupId: string }) {
             if (confirm(`Supprimer « ${s.name} »${n ? ` et ses ${n} évaluation(s)` : ''} ?`)) deleteSubject(s.id);
           }}
           onMove={(d) => moveSubject(s.id, d)}
+          defaultTeacher={titulaire}
         />
       ))}
+      <datalist id="teacher-names">
+        {knownTeachers.map((t) => (
+          <option key={t} value={t} />
+        ))}
+      </datalist>
       {adding && (
         <Modal title="Ajouter une matière" onClose={() => setAdding(false)}>
           <p className="muted">Matières du Programme de formation de l’école québécoise :</p>
@@ -250,6 +261,7 @@ function SubjectCard({
   onChange,
   onDelete,
   onMove,
+  defaultTeacher,
 }: {
   subject: Subject;
   first: boolean;
@@ -257,6 +269,7 @@ function SubjectCard({
   onChange: (p: Partial<Subject>) => void;
   onDelete: () => void;
   onMove: (d: -1 | 1) => void;
+  defaultTeacher: string;
 }) {
   const total = s.competencies.reduce((a, c) => a + c.weight, 0);
   const setComp = (id: string, p: Partial<Subject['competencies'][number]>) =>
@@ -283,6 +296,16 @@ function SubjectCard({
           <Icon name="trash" />
         </button>
       </div>
+      <label className="subject-teacher">
+        <span>Enseignant(e)</span>
+        <input
+          list="teacher-names"
+          value={s.teacherName ?? ''}
+          placeholder={`Titulaire${defaultTeacher ? ` (${defaultTeacher})` : ''}`}
+          onChange={(e) => onChange({ teacherName: e.target.value })}
+          aria-label="Enseignant(e) de la matière"
+        />
+      </label>
       <div className="comp-list">
         {s.competencies.map((c) => (
           <div className="comp-row" key={c.id}>

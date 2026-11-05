@@ -140,6 +140,8 @@ export function demoData(): AppData {
     const s = subjectFromTemplate(t, g.id, i);
     if (t.name.startsWith('Arts')) s.mode = 'letter';
     if (t.name.startsWith('Éducation physique')) s.mode = 'passfail';
+    if (t.name.startsWith('Éducation physique')) s.teacherName = 'M. Lavoie';
+    if (t.name.startsWith('Anglais')) s.teacherName = 'Mme Smith';
     d.subjects.push(s);
   });
   const [t1, t2] = d.terms;

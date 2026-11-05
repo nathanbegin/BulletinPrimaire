@@ -18,6 +18,7 @@ import { ABSENT, type Evaluation, type Mark, type Subject } from '../types';
 import { Keypad } from '../components/Keypad';
 import { EvaluationForm } from '../components/EvaluationForm';
 import { Icon } from '../components/Icon';
+import { PrintFrame, printNow } from '../components/Print';
 import { navigate } from '../router';
 import { SupportBadges } from '../components/SupportBadges';
 import { exportGroupWorkbook } from '../lib/excel';
@@ -270,6 +271,9 @@ export default function GridPage() {
               <input type="checkbox" checked={showPct} onChange={(e) => setShowPct(e.target.checked)} /> Afficher en %
             </label>
           )}
+          <button className="btn" onClick={printNow} title="Imprimer ou enregistrer en PDF">
+            <Icon name="print" size={18} /> PDF
+          </button>
           <button className="btn" onClick={() => exportGroupWorkbook(data, group)} title="Exporter le groupe en Excel">
             <Icon name="download" size={18} /> Excel
           </button>
@@ -299,6 +303,7 @@ export default function GridPage() {
         </div>
       )}
 
+      <PrintFrame group={group} title={`Relevé de notes — ${term.name}`} subtitle={filterSubject ? filterSubject.name : 'Toutes les matières'}>
       <div
         className="sheet-wrap"
         ref={wrapRef}
@@ -433,6 +438,7 @@ export default function GridPage() {
           </tfoot>
         </table>
       </div>
+      </PrintFrame>
       {!touch && evals.length > 0 && (
         <p className="hint no-print">
           Cliquez une cellule et tapez la note : <kbd>Entrée</kbd> passe à l’élève suivant, <kbd>Tab</kbd> à l’évaluation suivante,

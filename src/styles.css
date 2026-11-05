@@ -408,18 +408,6 @@ input[type='checkbox'] { width: 20px; height: 20px; accent-color: var(--primary)
 .b-sign { display: flex; gap: 32px; margin-top: 36px; }
 .b-sign div { flex: 1; border-top: 1px solid #1c2233; padding-top: 4px; font-size: 0.8rem; color: #6b7285; }
 
-@media print {
-  @page { size: letter; margin: 12mm; }
-  body { background: #fff; }
-  .no-print, .topbar, .sidenav, .entry-sheet, .toast { display: none !important; }
-  .print-only { display: block; }
-  .app { display: block; }
-  .main, .page { padding: 0; max-width: none; }
-  .bulletin { border: 0; box-shadow: none; padding: 0; margin: 0; page-break-after: always; break-after: page; overflow: visible; }
-  .bulletin:last-child { page-break-after: auto; break-after: auto; }
-  .b-table { min-width: 0; }
-}
-
 /* ---------- Interventions / difficultés ---------- */
 .support-badges { display: inline-flex; gap: 3px; margin-left: 6px; vertical-align: middle; }
 .sb { font-size: 0.64rem; font-weight: 800; line-height: 1; padding: 3px 5px; border-radius: 4px; letter-spacing: 0.02em; }
@@ -471,3 +459,104 @@ input[type='checkbox'] { width: 20px; height: 20px; accent-color: var(--primary)
   .kp-key.kp-big { min-height: 60px; }
   .keypad, .kp-grid, .kp-nav, .kp-letters { gap: 6px; }
 }
+
+/* ---------- Bulletin : présentation par étapes (même aspect que l'interface) ---------- */
+.b-brand { display: flex; gap: 12px; align-items: center; }
+.b-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; margin-bottom: 14px; }
+.b-tile { background: #f0f2f8; border-radius: 10px; padding: 8px 12px; border: 1px solid transparent; }
+.b-tile.current { background: #e7eefc; border-color: #2457c5; }
+.b-tile.future { opacity: 0.55; }
+.b-tile-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.03em; color: #5a6378; font-weight: 600; }
+.b-tile-label small { text-transform: none; font-weight: 500; }
+.b-tile-value { font-size: 1.35rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.b-tile-value.low { color: #b4372a; }
+.b-tile-sub { font-size: 0.75rem; color: #5a6378; }
+.b-table { border-collapse: separate; border-spacing: 0; border: 1px solid #dde1ec; border-radius: 10px; overflow: hidden; }
+.b-table th, .b-table td { border: 0; border-right: 1px solid #dde1ec; border-bottom: 1px solid #dde1ec; }
+.b-table th:last-child, .b-table td:last-child { border-right: 0; }
+.b-table tbody tr:last-child td { border-bottom: 0; }
+.b-table thead th { background: #f0f2f8; color: #1c2233; }
+.b-table thead th.current { background: #e7eefc; color: #2457c5; box-shadow: inset 0 -3px 0 #2457c5; }
+.b-table .b-final-h { background: #e7eefc; color: #2457c5; }
+.b-table td.b-res { font-weight: 600; }
+.b-table td.b-res.current { background: #f5f8ff; }
+.b-table td.b-res.low { background: #fff1ee; color: #b4372a; }
+.b-table td.b-grp { color: #8a92a6; }
+.b-table td.future { background: repeating-linear-gradient(135deg, #fafbfd 0 6px, #f2f4f9 6px 8px); }
+.b-table td.b-final { background: #eef3fd; font-weight: 700; }
+.b-table .row-strong td { background: #f7f8fc; }
+.b-table .row-strong td.b-res.low { background: #fde6e1; }
+.b-table .row-strong td.b-final { background: #e1e9fb; }
+.b-subj-teacher { display: block; font-weight: 500; font-size: 0.72rem; color: #6b7285; }
+.print-footer-line { display: flex; justify-content: space-between; gap: 12px; font-size: 7.5pt; color: #6b7285; border-top: 1px solid #dde1ec; padding-top: 4px; }
+.bulletin .b-footer { margin-top: 18px; }
+
+/* Cadre d'impression (relevé, statistiques) */
+.print-frame-head { display: none; }
+.pf-brand { display: flex; gap: 10px; align-items: center; }
+.pf-school { font-weight: 800; color: #2457c5; font-size: 1.05rem; }
+.pf-title { font-weight: 700; font-size: 1.15rem; }
+.pf-meta { font-size: 0.82rem; text-align: right; }
+.pf-meta span { color: #6b7285; }
+.pf-sub { color: #2457c5; font-weight: 600; }
+
+@media print {
+  @page { size: letter; margin: 12mm 12mm 10mm; }
+  html, body, .app { height: auto !important; min-height: 0 !important; }
+  html, body { background: #fff !important; color: #1c2233; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  :root { color-scheme: light; --bg: #fff; --surface: #fff; --surface-2: #f0f2f8; --border: #dde1ec; --text: #1c2233; --text-2: #5a6378; --muted: #8a92a6;
+    --primary: #2457c5; --primary-2: #e7eefc; --low-bg: #fff1ee; --low-ink: #b4372a; --row-hl: #fff; --shadow: none; }
+  .no-print, .topbar, .sidenav, .entry-sheet, .toast, .page-head, .chips, .tabs, .toolbar, .hint, .modal-backdrop, .th-quick { display: none !important; }
+  .print-only { display: block; }
+  .app { display: block; }
+  .main, .page { padding: 0 !important; max-width: none; }
+
+  /* Bulletin : une page par élève, pied de page en bas */
+  .bulletin { border: 0; box-shadow: none; padding: 0; margin: 0; overflow: visible; min-height: 250mm; display: flex; flex-direction: column;
+    break-after: page; page-break-after: always; font-size: 10pt; }
+  .bulletin:last-child { break-after: auto; page-break-after: auto; }
+  .bulletin .b-footer { margin-top: auto; padding-top: 4px; }
+  .bulletin .b-sign { margin-bottom: 10px; }
+  .b-table { min-width: 0; font-size: 8.5pt; }
+  .b-table th, .b-table td { padding: 3px 6px; }
+  .b-table .b-subj, .b-table tbody td:first-child { width: 36%; }
+  .b-table tr { break-inside: avoid; }
+  .b-head { padding-bottom: 8px; margin-bottom: 10px; }
+  .b-tiles { margin-bottom: 10px; }
+  .b-tile { padding: 5px 10px; }
+  .b-tile-value { font-size: 1.15rem; }
+  .b-comment { margin-top: 10px; }
+  .b-comment-text { min-height: 40px; }
+  .bulletin .b-sign { margin-top: 24px; }
+
+  /* Relevé de notes et statistiques */
+  .print-frame { display: table; width: 100%; }
+  .print-frame-head { display: flex !important; justify-content: space-between; align-items: flex-end; gap: 16px; border-bottom: 3px solid #2457c5; padding-bottom: 8px; margin-bottom: 10px; }
+  .print-frame-foot { display: table-footer-group !important; }
+  .print-footer-space { height: 9mm; }
+  .print-footer-fixed { display: flex !important; position: fixed; left: 0; right: 0; bottom: 0; background: #fff; }
+  .page-grid { page: landscape; }
+  .sheet-wrap { max-height: none !important; overflow: visible; border-radius: 8px; }
+  .sheet { font-size: 7pt; width: 100%; min-width: 0; table-layout: fixed; }
+  .sheet .corner, .student-cell { width: 30mm; }
+  .sheet .th-title { font-size: 6.5pt; -webkit-line-clamp: 3; white-space: normal; }
+  .sheet .th-subject { font-size: 5.5pt; max-width: none; white-space: normal; }
+  .sheet thead th { padding: 3px 2px; }
+  .sheet td.cell, .sheet td.result { padding: 2px 1px; white-space: nowrap; overflow: hidden; }
+  .sheet .support-badges { margin-left: 2px; }
+  .sheet tfoot td, .sheet tfoot th, .student-cell { font-size: 7pt; padding: 2px 3px; height: auto; }
+  .sheet .sb { font-size: 5pt; padding: 1px 2px; }
+  .print-frame-body, .page-grid { width: 100%; }
+  .sheet thead th, .sheet .sticky-col, .sheet tfoot td, .sheet tfoot th { position: static !important; }
+  .sheet td.cell, .student-cell { height: auto; padding: 3px 4px; }
+  .student-cell { min-width: 0; max-width: none; }
+  .eval-col, .result-col { min-width: 0; }
+  .sheet td.cell.active { outline: 0; }
+  .sheet tr { break-inside: avoid; }
+  .card { box-shadow: none; break-inside: avoid; }
+  .list-table { font-size: 9pt; }
+  .histo-bars { height: 100px; }
+}
+@page landscape { size: letter landscape; }
+.subject-teacher { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 0.88rem; color: var(--text-2); font-weight: 600; }
+.subject-teacher input { flex: 1; max-width: 360px; font-weight: 400; }

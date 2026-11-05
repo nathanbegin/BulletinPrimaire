@@ -20,6 +20,8 @@ import { computeStats, mean, type Stats } from '../lib/stats';
 import { StatsSummary } from '../components/StatsSummary';
 import { Histogram } from '../components/Histogram';
 import { navigate } from '../router';
+import { Icon } from '../components/Icon';
+import { PrintFrame, printNow } from '../components/Print';
 import { shortName } from './GridPage';
 import type { AppData, Evaluation, Group, Term } from '../types';
 
@@ -38,6 +40,11 @@ export default function StatsPage({ tab = 'groupe', itemId }: { tab?: string; it
         <h1>
           Statistiques <small>{group.name} · {term.name}</small>
         </h1>
+        <div className="actions">
+          <button className="btn" onClick={printNow}>
+            <Icon name="print" size={18} /> PDF
+          </button>
+        </div>
       </div>
       <div className="tabs">
         {tabs.map(([k, l]) => (
@@ -46,9 +53,11 @@ export default function StatsPage({ tab = 'groupe', itemId }: { tab?: string; it
           </button>
         ))}
       </div>
-      {tab === 'evaluation' && <EvalStats data={data} group={group} term={term} evalId={itemId} />}
-      {tab === 'eleve' && <StudentStats data={data} group={group} term={term} studentId={itemId} />}
-      {tab === 'groupe' && <GroupStats data={data} group={group} term={term} />}
+      <PrintFrame group={group} title={`Statistiques — ${term.name}`} subtitle={tabs.find(([k]) => k === tab)?.[1]}>
+        {tab === 'evaluation' && <EvalStats data={data} group={group} term={term} evalId={itemId} />}
+        {tab === 'eleve' && <StudentStats data={data} group={group} term={term} studentId={itemId} />}
+        {tab === 'groupe' && <GroupStats data={data} group={group} term={term} />}
+      </PrintFrame>
     </div>
   );
 }
