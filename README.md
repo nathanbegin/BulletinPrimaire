@@ -25,3 +25,8 @@ npm run dev      # serveur de développement
 npm test         # tests unitaires (calculs, saisie, export Excel)
 npm run build    # version de production dans dist/ (à déployer sur n'importe quel hébergement statique)
 ```
+
+## Aperçu en ligne (GitHub Pages)
+
+La version compilée est publiée dans `docs/`. Pour la mettre à jour : `npm run build:pages`, puis commit et push.
+Activation (une seule fois) : Settings → Pages → Source « Deploy from a branch » → branche `claude/admiring-carson-4pvahu`, dossier `/docs`.
